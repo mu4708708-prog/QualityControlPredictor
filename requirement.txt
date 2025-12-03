@@ -4,5 +4,5 @@ pandas==2.2.3
 scikit-learn
 matplotlib
 seaborn
-pickle
+joblib
 streamlit==1.51.0
