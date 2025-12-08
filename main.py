@@ -17,7 +17,7 @@ with open("scaler_model.pkl", "rb") as scaler_file:
 st.set_page_config(page_title="Quality Prediction", page_icon="⚙️", layout="centered")
 st.title("Machine Quality Prediction System")
 st.markdown("""
-This app predicts whether a machine's product will **Pass** or **Fail** based on five input features.  
+This app predicts whether a machine's product will *Pass* or *Fail* based on five input features.  
 The input data is scaled before being fed into the trained ML model.
 """)
 
@@ -45,25 +45,42 @@ st.subheader("Entered Input Values")
 st.table(input_df)
 
 # -------------------------
-# 4. Prediction
+# 4. Prediction (WITH THRESHOLD)
 # -------------------------
 if st.button("Predict"):
     try:
-        # Scale the input
-        scaled_data = scaler.transform(input_df)
+        eff_value = efficiency  # shorthand
 
-        # Predict
-        prediction = model.predict(scaled_data)
-        label = prediction[0]   # "Pass" or "Fail"
+        # ------------------------------------
+        # 🔹 1. Efficiency Threshold Rules
+        # ------------------------------------
+        if eff_value < 50:
+            st.subheader("Prediction Result")
+            st.error("Predicted Quality: FAIL")
+            st.write("Reason: Efficiency < 50% threshold (Rule-Based)")
+        
+        elif eff_value >60 :
+            st.subheader("Prediction Result")
+            st.success("Predicted Quality: PASS")
+            st.write("Reason: Efficiency > 70% threshold (Rule-Based)")
 
-        # Correct output mapping
-        if label == "Pass":
-            result_text = "Pass"
         else:
-            result_text = "Fail"
+            # ------------------------------------
+            # 🔹 2. Borderline Zone (50–70)
+            #     → Use ML Model Prediction
+            # ------------------------------------
+            scaled_data = scaler.transform(input_df)
+            prediction = model.predict(scaled_data)
+            label = prediction[0]
 
-        st.subheader("Prediction Result")
-        st.success(f"Predicted Quality: {result_text}")
+            st.subheader("Prediction Result")
+
+            if label == "Pass":
+                st.success("Predicted Quality: PASS")
+                st.write("Reason: Efficiency 50–70%, ML model decided PASS.")
+            else:
+                st.error("Predicted Quality: FAIL")
+                st.write("Reason: Efficiency 50–70%, ML model decided FAIL.")
 
     except Exception as e:
         st.error(f"Error: {str(e)}")
