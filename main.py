@@ -45,42 +45,25 @@ st.subheader("Entered Input Values")
 st.table(input_df)
 
 # -------------------------
-# 4. Prediction (WITH THRESHOLD)
+# 4. Prediction
 # -------------------------
 if st.button("Predict"):
     try:
-        eff_value = efficiency  # shorthand
+        # Scale the input
+        scaled_data = scaler.transform(input_df)
 
-        # ------------------------------------
-        # 🔹 1. Efficiency Threshold Rules
-        # ------------------------------------
-        if eff_value < 50:
-            st.subheader("Prediction Result")
-            st.error("Predicted Quality: FAIL")
-            st.write("Reason: Efficiency < 50% threshold (Rule-Based)")
-        
-        elif eff_value >60 :
-            st.subheader("Prediction Result")
-            st.success("Predicted Quality: PASS")
-            st.write("Reason: Efficiency > 70% threshold (Rule-Based)")
+        # Predict
+        prediction = model.predict(scaled_data)
+        label = prediction[0]   # "Pass" or "Fail"
 
+        # Correct output mapping
+        if label == "Pass":
+            result_text = "Pass"
         else:
-            # ------------------------------------
-            # 🔹 2. Borderline Zone (50–70)
-            #     → Use ML Model Prediction
-            # ------------------------------------
-            scaled_data = scaler.transform(input_df)
-            prediction = model.predict(scaled_data)
-            label = prediction[0]
+            result_text = "Fail"
 
-            st.subheader("Prediction Result")
-
-            if label == "Pass":
-                st.success("Predicted Quality: PASS")
-                st.write("Reason: Efficiency 50–70%, ML model decided PASS.")
-            else:
-                st.error("Predicted Quality: FAIL")
-                st.write("Reason: Efficiency 50–70%, ML model decided FAIL.")
+        st.subheader("Prediction Result")
+        st.success(f"Predicted Quality: {result_text}")
 
     except Exception as e:
         st.error(f"Error: {str(e)}")
