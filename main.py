@@ -26,11 +26,16 @@ The input data is scaled before being fed into the trained ML model.
 # -------------------------
 st.sidebar.header("Input Features")
 
-temperature = st.sidebar.number_input("Temperature (°C)", min_value=55, max_value=120.0, value=25.0, step=0.1)
+temperature = st.sidebar.number_input("Temperature (°C)", min_value=55.0, max_value=120.0,  value=55.0, step=0.1)
+
 vibration = st.sidebar.number_input("Vibration (mm/s)", min_value=0.01, max_value=20.0, value=1.0, step=0.1)
-pressure = st.sidebar.number_input("Pressure (bar)", min_value=1.5, max_value=3.50, value=1.0, step=0.1)
+
+pressure = st.sidebar.number_input("Pressure (bar)", min_value=1.5, max_value=3.50,value=1.5, step=0.1)
+
 flow_rate = st.sidebar.number_input("Flow Rate (L/min)", min_value=1.0, max_value=500.0, value=10.0, step=0.1)
-efficiency = st.sidebar.number_input("Efficiency (%)", min_value=5.0, max_value=100.0, value=90.0, step=0.1)
+
+efficiency = st.sidebar.number_input("Efficiency (%)", min_value=5.0, max_value=100.0,value=90.0, step=0.1)
+
 
 # Collect inputs
 input_df = pd.DataFrame({
